@@ -35,6 +35,10 @@ namespace Tetris
                   gameManager.LockPiece();
               break;
 
+            case ConsoleKey.UpArrow:
+              gameManager.RotatePiece();
+              break;
+
             case ConsoleKey.Q:
               isRunning = false;
               break;

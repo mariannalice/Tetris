@@ -1,9 +1,11 @@
+using System.Data;
 using Tetris.Models;
 
 namespace Tetris.Services
 {
   public class GameManager
   {
+    public int Score { get; private set; } = 0;
     private Board _board;
     private Piece _currentPiece;
 
@@ -15,18 +17,48 @@ namespace Tetris.Services
 
     public void SpawnNewPiece()
     {
-      int[,] tShape = new int[,]
-      {
-        { 0, 1, 0 },
-        { 1, 1, 1 }
-      };
+      Random random = new Random();
 
-      _currentPiece = new Piece(tShape)
+      int shapeIndex = random.Next(0, Tetrominoes.Shapes.Length);
+      int[,] shape = Tetrominoes.Shapes[shapeIndex];
+
+      _currentPiece = new Piece(shape)
       {
-        X = _board.Width / 2 - 1,
+        X = _board.Width / 2 - shape.GetLength(1) / 2,
         Y = 0
       };
     }
+
+    public void RotatePiece()
+    {
+      Console.WriteLine("Attempting to rotate...");
+      Console.WriteLine("Before rotation:");
+      PrintShape(_currentPiece.Shape);
+
+      var originalShape = (int[,])_currentPiece.Shape.Clone();
+      _currentPiece.Rotate();
+
+      Console.WriteLine("After rotation:");
+      PrintShape(_currentPiece.Shape);
+
+      if (IsCollision(_currentPiece.X, _currentPiece.Y, _currentPiece.Shape))
+      {
+        Console.WriteLine("Collision detected! Reverting rotation.");
+        _currentPiece.Shape = originalShape;
+      }
+    }
+
+    private void PrintShape(int[,] shape)
+{
+    for (int row = 0; row < shape.GetLength(0); row++)
+    {
+        for (int col = 0; col < shape.GetLength(1); col++)
+        {
+            Console.Write(shape[row, col] + " ");
+        }
+        Console.WriteLine();
+    }
+}
 
     public bool MovePiece(int dx, int dy)
     {
@@ -54,7 +86,65 @@ namespace Tetris.Services
         }
       }
 
+      ClearFullRows();
       SpawnNewPiece();
+
+      if (IsCollision(_currentPiece.X, _currentPiece.Y, _currentPiece.Shape))
+      {
+        Console.WriteLine("Gameover!");
+        Environment.Exit(0);
+      }
+    }
+
+    public void ClearFullRows()
+    {
+      for (int row = 0; row < _board.Height; row++)
+      {
+        bool isFullRow = true;
+
+        for (int col = 0; col < _board.Width; col++)
+        {
+          if (_board.Grid[row, col] == 0)
+          {
+            isFullRow = false;
+            break;
+          }
+        }
+
+        if (isFullRow)
+        {
+          ClearRow(row);
+          ShiftRowsDown(row);
+          row--;
+        }
+      }
+    }
+
+    private void ClearRow(int row)
+    {
+      for (int col = 0; col < _board.Width; col++)
+      {
+        _board.Grid[row, col] = 0;
+      }
+
+      Score += 100;
+      Console.WriteLine($" Row cleard! Score: {Score}");
+    }
+
+    private void ShiftRowsDown(int clearedRow)
+    {
+      for (int row = clearedRow; row < 0; row--)
+      {
+        for (int col = 0; col < _board.Width; col++)
+        {
+          _board.Grid[row, col] = _board.Grid[row - 1, col];
+        }
+      }
+
+      for (int col = 0; col < _board.Width; col++)
+      {
+        _board.Grid[0, col] = 0;
+      }
     }
 
     private bool IsCollision(int x, int y, int [,] shape)
