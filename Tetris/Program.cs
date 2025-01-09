@@ -1,4 +1,7 @@
+using System.Threading;
+using Microsoft.AspNetCore.Routing.Tree;
 using Tetris.Models;
+using Tetris. Services;
 
 namespace Tetris
 {
@@ -7,29 +10,45 @@ namespace Tetris
     static void Main(string[] args)
     {
       Board board = new Board (10, 20);
+      GameManager gameManager = new GameManager(board);
 
-      int[,] tShape = new int[,]
-      {
-        { 0, 1, 0 },
-        { 1, 1, 1 }
-      };
+      bool isRunning = true;
 
-      Piece tPiece = new Piece(tShape)
+      while (isRunning)
       {
-        X = 3,
-        Y = 0
-      };
-
-      for (int row = 0; row < tPiece.Shape.GetLength(0); row++)
-      {
-        for (int col = 0; col < tPiece.Shape.GetLength(1); col++)
+        if (Console.KeyAvailable)
         {
-          if (tPiece.Shape[row,col] == 1)
+          var key = Console.ReadKey(true).Key;
+
+          switch (key)
           {
-            board.Grid[tPiece.Y + row, tPiece.X +col] = 1;
+            case ConsoleKey.LeftArrow:
+              gameManager.MovePiece(-1, 0);
+              break; 
+
+            case ConsoleKey.RightArrow:
+              gameManager.MovePiece(1, 0);
+              break;
+
+            case ConsoleKey.DownArrow:
+              if (!gameManager.MovePiece(0, 1))
+                  gameManager.LockPiece();
+              break;
+
+            case ConsoleKey.Q:
+              isRunning = false;
+              break;
           }
         }
+
+        gameManager.Render();
+
+        Thread.Sleep(200);
       }
+      
+
+
+      
 
 
       // Displaying the board
