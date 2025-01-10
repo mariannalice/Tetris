@@ -98,6 +98,8 @@ namespace Tetris.Services
 
     public void ClearFullRows()
     {
+      int rowesCleared = 0; 
+
       for (int row = 0; row < _board.Height; row++)
       {
         bool isFullRow = true;
@@ -116,7 +118,13 @@ namespace Tetris.Services
           ClearRow(row);
           ShiftRowsDown(row);
           row--;
+          rowesCleared++;
         }
+      }
+
+      if (rowesCleared > 0)
+      {
+        Console.WriteLine($"{rowesCleared} row(s) cleared! Totalt score: {Score}!");
       }
     }
 
@@ -133,7 +141,7 @@ namespace Tetris.Services
 
     private void ShiftRowsDown(int clearedRow)
     {
-      for (int row = clearedRow; row < 0; row--)
+      for (int row = clearedRow; row > 0; row--)
       {
         for (int col = 0; col < _board.Width; col++)
         {
@@ -196,6 +204,9 @@ namespace Tetris.Services
         }
         Console.WriteLine();
       }
+
+      Console.WriteLine();
+      Console.WriteLine($"Score: {Score}");
     }
   }
 }
