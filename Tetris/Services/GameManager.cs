@@ -16,7 +16,7 @@ namespace Tetris.Services
       SpawnNewPiece();
     }
     
-    public void UpdateLevel()
+    private void UpdateLevel()
     {
       Level = Score / 400 + 1;
       Console.WriteLine($"Level: {Level}");
@@ -142,6 +142,7 @@ namespace Tetris.Services
       }
 
       Score += 100;
+      UpdateLevel();
       Console.WriteLine($" Row cleard! Score: {Score}");
     }
 
@@ -213,6 +214,7 @@ namespace Tetris.Services
 
       Console.WriteLine();
       Console.WriteLine($"Score: {Score}");
+      Console.WriteLine($"Level: {Level}");
     }
   }
 }

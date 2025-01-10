@@ -1,7 +1,7 @@
 using System.Threading;
 using Microsoft.AspNetCore.Routing.Tree;
 using Tetris.Models;
-using Tetris. Services;
+using Tetris.Services;
 
 namespace Tetris
 {
@@ -47,7 +47,7 @@ namespace Tetris
 
         gameManager.Render();
 
-        Thread.Sleep(Math.Max(100, 500 - (Level - 1) * 50));
+        Thread.Sleep(Math.Max(100, 500 - (gameManager.Level - 1) * 50));
       }
       
 
