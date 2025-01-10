@@ -6,6 +6,7 @@ namespace Tetris.Services
   public class GameManager
   {
     public int Score { get; private set; } = 0;
+    public int Level {get; private set; } = 1;
     private Board _board;
     private Piece _currentPiece;
 
@@ -14,7 +15,12 @@ namespace Tetris.Services
       _board = board;
       SpawnNewPiece();
     }
-
+    
+    public void UpdateLevel()
+    {
+      Level = Score / 400 + 1;
+      Console.WriteLine($"Level: {Level}");
+    }
     public void SpawnNewPiece()
     {
       Random random = new Random();

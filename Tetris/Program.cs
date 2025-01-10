@@ -47,11 +47,8 @@ namespace Tetris
 
         gameManager.Render();
 
-        Thread.Sleep(200);
+        Thread.Sleep(Math.Max(100, 500 - (Level - 1) * 50));
       }
-      
-
-
       
 
 
